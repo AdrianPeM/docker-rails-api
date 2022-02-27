@@ -1,5 +1,5 @@
 class MusicController < ApplicationController
-    def hello
+    def index
         render json: {hello: "This is hello action"}
     end
 end
