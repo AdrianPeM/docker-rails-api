@@ -9,7 +9,12 @@ Rails.application.routes.draw do
   get "/articles/:id", to: "articles#show"
   post "/articles", to: "articles#create"
   get "/articles/:id/edit", to: "articles#edit"
-  patch "/articles/:id", to: "articles#update"
+  put "/articles/:id", to: "articles#update"
   delete "/articles/:id", to: "articles#destroy"
+
+  namespace :v1 do
+    resources :users
+    resources :facts
+  end
   
 end
