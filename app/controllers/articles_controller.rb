@@ -1,48 +1,49 @@
 class ArticlesController < ApplicationController
+  before_action :find_article, only: [:show, :update, :destroy]
+  
   def index
-    render json: {articles: Article.all}
-  end
-
-  def show
-    article = Article.find_by_id(params[:id])
-
-    render json: {article: article.as_json}
+    render json: Article.all
   end
 
   def create
     article = Article.new(article_params)
 
     if article.save
-      redirect_to "/articles/#{article.id}"
+      render json: { message: "Article successfully created.", article: article}
     else
-      render :new, status: :unprocessable_entity
+      render json: { message: "Unable to create Article." }, status: :unprocessable_entity
     end
   end
 
-  def edit
-    article = Article.find(params[:id])
-    render json: {article: article}
+  def show
+    render json: @article
   end
-
+  
   def update
-    article = Article.find(params[:id])
-
-    if article.update(article_params)
-      redirect_to "/articles/#{article.id}"
+    if @article
+      @article.update(article_params)
+      render json: { message: "Article successfully updated." }, status: 200
     else
-      render :edit, status: :unprocessable_entity
+      render json: { message: "Unable to update Article." }, status: :unprocessable_entity
     end
   end
 
   def destroy
-    article = Article.find(params[:id])
-    article.destroy
-
-    redirect_to articles_url, status: :see_other
+    if @article
+      @article.destroy
+      render json: { message: "Article successfully deleted." }, status: 200
+    else
+      render json: { error: "Unable to delete Article." }, status: :unprocessable_entity
+    end
   end
 
   private
     def article_params
       params.require(:article).permit(:title, :body)
     end
+
+    def find_article
+      @article = Article.find_by_id(params[:id])
+    end
+    
 end
